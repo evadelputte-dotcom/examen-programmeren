@@ -1,0 +1,205 @@
+Opgave nog oudere  
+
+MatchAnalysis Opgave 
+
+Deel 1 — Player 
+
+Doel: Maak een klasse Player die spelers voorstelt met naam en rugnummer. 
+
+Vereisten 
+
+Instantievariabelen 
+
+name (str): de naam van de speler. 
+
+number (int): het shirt-nummer van de speler. 
+
+Constructor 
+
+Initialiseert name en number via parameters. 
+
+Methodes 
+
+__eq__(other) 
+
+Retourneert True als other ook een Player is en de name gelijk is. 
+
+Het nummer speelt geen rol. 
+
+__lt__(other) 
+
+Vergelijkt spelers op basis van number (laagste nummer eerst). 
+
+Als other geen Player is, retourneer NotImplemented. 
+
+__str__() 
+
+Retourneert "Naam (nummer)". 
+
+Voorbeeld: "Eden Hazard (10)" 
+
+Testen 
+
+Maak drie spelerobjecten en plaats ze in een lijst. 
+
+Print één speler. 
+
+Test __eq__. 
+
+Test __lt__ met sorted(). 
+
+ 
+
+Deel 2 — Pass 
+
+Doel: Maak een klasse Pass die een pass tussen twee spelers voorstelt. 
+
+Vereisten 
+
+Instantievariabelen 
+
+sender (Player): de speler die de pass geeft. 
+
+receiver (Player): de speler die de pass ontvangt. 
+
+nr_of_times (int): aantal keren dat deze pass plaatsvond. 
+
+Constructor 
+
+Ontvangt sender, receiver en nr_of_times als parameters. 
+
+Methodes 
+
+get_weight(): retourneert nr_of_times. 
+
+get_start(): retourneert sender. 
+
+get_end(): retourneert receiver. 
+
+__eq__(other): retourneert True als other ook een pass is met dezelfde sender en receiver. 
+
+__str__(): "Pass from <sender> to <receiver>". 
+
+Voorbeeld: "Pass from Eden Hazard to Moussa Dembele" 
+
+Testen 
+
+Maak drie Player-objecten en drie Pass-objecten. 
+
+Print één pass. 
+
+Test __eq__ en get_weight(). 
+
+ 
+
+Deel 3 — PassGraph 
+
+Doel: Bouw een graaf die passes tussen spelers bijhoudt en eenvoudige analyses uitvoert. 
+
+Vereisten 
+
+Interne representatie 
+
+players: lijst van alle spelers. 
+
+adj: dict met sender_name als key en lijst van uitgaande passes als waarde. 
+
+Basisoperaties 
+
+add_player(player): voegt speler toe als hij nog niet bestaat, maakt lege lijst in adj. 
+
+has_player(player_or_name): controleer of speler/naam in graaf zit. 
+
+get_player(name): retourneer speler met deze naam, of None. 
+
+add_pass(sender, receiver, times=1): registreer een pass of verhoog nr_of_times. 
+
+Vereist dat beide spelers aanwezig zijn. 
+
+Als times <= 0, negeer of gooi ValueError. 
+
+get_pass(sender_name, receiver_name): retourneer pass of None. 
+
+neighbors(sender_name): retourneer lijst uitgaande passes. 
+
+Analysefuncties 
+
+total_weight(subset): som van nr_of_times voor passes binnen subset (of alle spelers als None). 
+
+pass_intensity(subset=None): teller / (n*(n-1)), intensiteit van onderlinge passes. 
+
+Special case: subset < 2 → intensiteit = 0.0 
+
+top_pairs(k=5): retourneer top k passes wereldwijd op basis van nr_of_times. 
+
+distribution_from(sender_name): lijst (receiver_name, count) van een zender, dalend op count. 
+
+Testen 
+
+Maak een PassGraph met minstens 4 spelers en 6 passes. 
+
+Test alle analyse-methodes. 
+
+ 
+
+Deel 4 — Opslaan en inlezen 
+
+Doel: Voeg functionaliteit toe om de PassGraph op te slaan en in te lezen vanuit een .txt-bestand. 
+
+Bestandsformaat 
+
+# Commentaarregel 
+[PLAYERS] 
+<name>;<number> 
+... 
+[PASSES] 
+<sender_name> -> <receiver_name> : <nr_of_times> 
+  
+
+Dubbele passes → tel gewichten op. 
+
+Ongeldige input → ValueError. 
+
+Vereisten 
+
+Basisoperaties 
+
+players(): retourneer kopie van spelerslijst. 
+
+passes(): retourneer alle passes in de graaf. 
+
+Constructor met pad 
+
+PassGraph(path_name=None) 
+
+Zonder path → lege graaf. 
+
+Met path → lees bestand in en vul graaf. 
+
+Ondersteun commentregels (#), lege regels, [PLAYERS], [PASSES]. 
+
+Fouten: onbekende sectie → ValueError. 
+
+save_to_txt(path) 
+
+Sla graaf op in het opgegeven format. 
+
+Overschrijft bestand. 
+
+Eerst [PLAYERS], daarna [PASSES]. 
+
+Testen 
+
+Bouw PassGraph met ≥ 4 spelers en ≥ 4 passes (1 pass meerdere keren). 
+
+Sla op met save_to_txt("team.txt"). 
+
+Lees opnieuw in: g2 = PassGraph("team.txt"). 
+
+ 
+
+Als je wilt, kan ik dit nu ook omzetten in een kant-en-klare Python-implementatie waarin alle vier de delen verwerkt zijn, inclusief testscenario’s. 
+
+Wil je dat ik dat doe? 
+
+ 
