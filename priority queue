@@ -1,0 +1,271 @@
+Priority queue 
+
+from Heap import Heap 
+
+ 
+
+class PriorityQueue: 
+
+    def __init__(self): 
+
+        self.__heap = Heap() 
+
+ 
+
+    # Adds an element to this queue 
+
+    def enqueue(self, e): 
+
+        self.__heap.add(e) 
+
+     
+
+    # Removes and returns the element with highest priority 
+
+    def dequeue(self): 
+
+        if self.isEmpty(): 
+
+            return None 
+
+        return self.__heap.remove() 
+
+     
+
+    # Return the size of the queue 
+
+    def getSize(self): 
+
+        return self.__heap.getSize() 
+
+     
+
+    # Peek at the element with highest priority without removing it 
+
+    def peek(self): 
+
+        if self.isEmpty(): 
+
+            return None 
+
+        return self.__heap.getData()[0]  # Hoogste prioriteit staat bovenaan in heap 
+
+     
+
+    # Check if the queue is empty 
+
+    def isEmpty(self): 
+
+        return self.getSize() == 0 
+
+     
+
+    # Clear the entire queue 
+
+    def clear(self): 
+
+        self.__heap = Heap() 
+
+     
+
+    # Check if the queue contains a specific element 
+
+    def contains(self, e): 
+
+        return e in self.__heap.getData() 
+
+     
+
+    # Change the priority of an element 
+
+    def changePriority(self, old, new): 
+
+        data = self.__heap.getData() 
+
+        if old in data: 
+
+            index = data.index(old) 
+
+            data[index] = new 
+
+            # Re-balance the heap after priority change 
+
+            self.__heap._heapify_up(index) 
+
+            self.__heap._heapify_down(index) 
+
+     
+
+    # Iterator to loop through all elements (optional) 
+
+    def __iter__(self): 
+
+        return iter(self.__heap.getData()) 
+
+ 
+
+heap: 
+
+class Heap: 
+
+    def __init__(self): 
+
+        self.__lst = [] 
+
+ 
+
+    # Add a new item into the heap 
+
+    def add(self, e): 
+
+        self.__lst.append(e)  # Append to the list 
+
+        self._heapify_up(len(self.__lst) - 1) 
+
+ 
+
+    # Remove the root (max) from the heap 
+
+    def remove(self): 
+
+        if self.isEmpty(): 
+
+            return None 
+
+         
+
+        removedItem = self.__lst[0] 
+
+        self.__lst[0] = self.__lst[-1] 
+
+        self.__lst.pop() 
+
+        self._heapify_down(0) 
+
+        return removedItem 
+
+ 
+
+    # Heapify up: used when adding a new element 
+
+    def _heapify_up(self, index): 
+
+        currentIndex = index 
+
+        while currentIndex > 0: 
+
+            parentIndex = (currentIndex - 1) // 2 
+
+            if self.__lst[currentIndex] > self.__lst[parentIndex]: 
+
+                self.__lst[currentIndex], self.__lst[parentIndex] = \ 
+
+                    self.__lst[parentIndex], self.__lst[currentIndex] 
+
+                currentIndex = parentIndex 
+
+            else: 
+
+                break 
+
+ 
+
+    # Heapify down: used when removing the root or changing priority 
+
+    def _heapify_down(self, index): 
+
+        currentIndex = index 
+
+        size = len(self.__lst) 
+
+        while currentIndex < size: 
+
+            leftChildIndex = 2 * currentIndex + 1 
+
+            rightChildIndex = 2 * currentIndex + 2 
+
+            maxIndex = currentIndex 
+
+ 
+
+            if leftChildIndex < size and self.__lst[leftChildIndex] > self.__lst[maxIndex]: 
+
+                maxIndex = leftChildIndex 
+
+            if rightChildIndex < size and self.__lst[rightChildIndex] > self.__lst[maxIndex]: 
+
+                maxIndex = rightChildIndex 
+
+ 
+
+            if maxIndex != currentIndex: 
+
+                self.__lst[currentIndex], self.__lst[maxIndex] = \ 
+
+                    self.__lst[maxIndex], self.__lst[currentIndex] 
+
+                currentIndex = maxIndex 
+
+            else: 
+
+                break 
+
+ 
+
+    # Returns the size of the heap 
+
+    def getSize(self): 
+
+        return len(self.__lst) 
+
+ 
+
+    # Returns True if the heap is empty 
+
+    def isEmpty(self): 
+
+        return self.getSize() == 0 
+
+ 
+
+    # Returns the largest element in the heap without removing it 
+
+    def peek(self): 
+
+        if self.isEmpty(): 
+
+            return None 
+
+        return self.__lst[0] 
+
+ 
+
+    # Returns the list of all elements in the heap 
+
+    def getLst(self): 
+
+        return self.__lst 
+
+ 
+
+    # Clear the heap 
+
+    def clear(self): 
+
+        self.__lst = [] 
+
+ 
+
+    # Check if the heap contains an element 
+
+    def contains(self, e): 
+
+        return e in self.__lst 
+
+ 
+
+    # Iterator to loop through all elements 
+
+    def __iter__(self): 
+
+        return iter(self.__lst) 
