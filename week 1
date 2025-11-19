@@ -1,0 +1,129 @@
+# https://dodona.be/nl/courses/5447/series/63925/activities/45145914
+
+#list[x], betekent “geef het element op index x”. WEL lijst.index(x) GEBRUIKEN !!
+# niet list gebruiken als variabele!! is een gereserveerd woord !!
+
+
+def zoek(lijst: list, x: int):
+    kleinsteIndex = 0                       # index, niet de waarde
+    grootsteIndex = len(lijst) - 1          # laatste index
+
+    while kleinsteIndex <= grootsteIndex:   # zoekzone blijft geldig
+        midden = (kleinsteIndex + grootsteIndex) // 2   # middenindex
+
+        if lijst[midden] == x:              # element gevonden
+            return midden
+
+        if lijst[midden] > x:               # x zit links
+            grootsteIndex = midden - 1      # grens opschuiven
+
+        if lijst[midden] < x:               # x zit rechts
+            kleinsteIndex = midden + 1      # grens opschuiven
+
+
+
+# https://dodona.be/nl/courses/5447/series/63925/activities/101669433
+
+def combisom(lijst:list, getal: int):
+    n = len(lijst)
+    for i in range(n):                              #i moet in range(n) anders zoals bij i in lijst is i een waarde en geen index!
+        for j in range(i+1, n):                     #for i in range(n): → i is een index (0, 1, 2 … n-1)
+            if lijst[i] + lijst[j] == getal:        #for i in lijst: → i is een waarde uit de lijst
+                return True
+
+    return False
+
+
+# https://dodona.be/nl/courses/5447/series/63925/activities/1325500143
+
+def samenvoegen(reeks1, reeks2):
+    """Voegt twee reeksen beurtelings samen tot de kortste op is."""
+    n = min(len(reeks1), len(reeks2))
+    resultaat = []
+    for i in range(n):                      #kan ook met while i <lengte_korste + i+=1
+        resultaat.append(reeks1[i])
+        resultaat.append(reeks2[i])
+    return resultaat
+
+
+def weven(reeks1, reeks2):
+    """Voegt twee reeksen beurtelings samen tot de langste op is.
+    Herhaalt de kortste reeks vanaf het begin als ze korter is."""
+    n = max(len(reeks1), len(reeks2))
+    resultaat = []
+    for i in range(n):
+        resultaat.append(reeks1[i % len(reeks1)])  #De modulo (%) berekent de rest van de deling.
+        resultaat.append(reeks2[i % len(reeks2)]) #Dus als i groter wordt dan de lengte van reeks1, springt de index automatisch terug naar 0.
+    return resultaat
+
+
+def ritsen(reeks1, reeks2):
+    """Voegt twee reeksen beurtelings samen tot de kortste op is,
+    daarna worden de rest van de langste reeks toegevoegd."""
+    n = min(len(reeks1), len(reeks2))
+    resultaat = []
+    for i in range(n):
+        resultaat.append(reeks1[i])
+        resultaat.append(reeks2[i])
+    # voeg de rest van de langste reeks toe
+    if len(reeks1) > len(reeks2):
+        resultaat.extend(reeks1[n:])
+    elif len(reeks2) > len(reeks1):
+        resultaat.extend(reeks2[n:])
+    return resultaat
+
+
+#uitleg van reeks1 = ['A', 'B'], dus len(reeks1) = 2.
+#| i | i % 2 | reeks1[i % 2] |
+#| - | ----- | ------------- |
+#| 0 | 0     | 'A'           |
+#| 1 | 1     | 'B'           |
+#| 2 | 0     | 'A'           |
+#| 3 | 1     | 'B'           |
+#Zo herhaal je dus automatisch 'A', 'B', 'A', 'B', … zolang het nodig is.
+
+
+# https://dodona.be/nl/courses/5447/series/63925/activities/2038783829
+
+# https://dodona.be/nl/courses/5447/series/63925/activities/2038783829
+
+def iszigzag(reeks: list) -> bool:
+    """Controleert of de reeks zigzag-gesorteerd is.
+    Even index: element >= volgende
+    Oneven index: element <= volgende
+    """
+    for i in range(len(reeks) - 1):
+        if i % 2 == 0:  # even index: element >= volgende
+            if reeks[i] < reeks[i + 1]:
+                return False
+        else:  # oneven index: element <= volgende
+            if reeks[i] > reeks[i + 1]:
+                return False
+    return True
+
+def zigzag_traag(reeks: list):
+    """Zigzag-sorteren volgens de trage methode (in-place).
+    Sorteer eerst de lijst en wissel vervolgens om de zigzag te creëren.
+    """
+    reeks.sort()  # Sorteer de lijst eerst
+    for i in range(0, len(reeks) - 1, 2):  # range(start, stop, stap) !!!!!
+        # start → 0, stop → len(reeks)-1 exclusief, stap → 2
+        reeks[i], reeks[i + 1] = reeks[i + 1], reeks[i]
+
+
+def zigzag_snel(reeks: list):
+    """Zigzag-sorteren volgens de snelle methode (in-place).
+    Vergelijk telkens een element met zijn buren en wissel indien nodig.
+    """
+    for i in range(0, len(reeks), 2):
+        if i > 0 and reeks[i] < reeks[i - 1]:                       #=> i = 0 lukt niet, want i-1: # check linkerburen
+            reeks[i], reeks[i - 1] = reeks[i - 1], reeks[i]         #voorkomt dat je probeert reeks[-1] te vergelijken als i=0
+        if i < len(reeks) - 1 and reeks[i] < reeks[i + 1]:          #=> i+1 valt buiten de rol: # check rechterburen
+            reeks[i], reeks[i + 1] = reeks[i + 1], reeks[i]         #voorkomt dat je probeert reeks[i+1] te vergelijken bij het laatste element
+
+
+
+
+
+
+
