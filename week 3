@@ -1,0 +1,82 @@
+# https://dodona.be/nl/courses/5447/series/63927/activities/1092659960
+
+def hanoi(n, start='A', hulp='B', doel='C'):
+    """
+    Lost de Torens van Hanoi puzzel op voor n schijven.
+    Print de stappen en het totaal aantal stappen op het einde.
+    """
+
+    def verplaats(n, start, hulp, doel):  # interne recursieve functie
+            if n == 1:  # basisgeval: als er 1 schijf is
+                print(f"Schijf 1 van {start} naar {doel}")  # print de verplaatsing
+                return 1  # 1 stap gemaakt
+            else:
+                stappen = verplaats(n - 1, start, doel, hulp)  # verplaats de bovenste n-1 schijven naar de hulp-paals
+                print(f"Schijf {n} van {start} naar {doel}")  # verplaats de grootste schijf naar de doelpaal
+                stappen += 1  # tel deze stap erbij
+                stappen += verplaats(n - 1, hulp, start, doel)  # verplaats de n-1 schijven van hulp naar doelpaal
+                return stappen  # geef totaal aantal stappen terug
+
+        totaal = verplaats(n, start, hulp, doel)  # start het hele proces en tel alle stappen
+        print(f"{totaal} stappen gedaan")  # print het totaal aantal stappen
+
+
+
+
+
+
+# https://dodona.be/nl/courses/5447/series/63927/activities/1771932993
+
+
+def isPalindroom(s):
+    s = str(s)
+    if len(s) <= 1:
+        return True
+    if s[0] != s[-1]:
+        return False
+    return isPalindroom(s[1:-1])
+
+    #for i in range(len(s)):
+    #     if s[i-1] == s[-i]:
+    #        return True
+
+    #via true:
+    #def isPalindroom(s):
+    #s = str(s)
+    #if len(s) <= 1:            # Basisgeval: lege string of 1 karakter → palindroom
+    #    return True
+    #if s[0] == s[-1]:          # Eerste en laatste teken zijn gelijk
+    #    return isPalindroom(s[1:-1])  # Check de rest
+    #else:
+    #    return False            # Als eerste en laatste verschillend zijn → geen palindroom
+
+
+# https://dodona.be/nl/courses/5447/series/63927/activities/546000908
+
+def fib(n):
+    if n <= 1:
+        return n
+
+
+
+# https://dodona.be/nl/courses/5447/series/63927/activities/1351245335
+
+# Oefening: bereken de faculteit van een getal
+# Link: https://dodona.be/nl/courses/5447/series/63927/activities/1351245335
+
+def faculteit(t):
+    if t == 0:
+        return 1
+    else:
+        return t * faculteit(t - 1)
+
+aantal = int(input())
+for _ in range(aantal):
+    t = int(input())
+    if t > 13:
+        print("invoer te groot")
+    else:
+        print(faculteit(t))
+
+    else:
+        return fib(n-1) + fib(n-2)
