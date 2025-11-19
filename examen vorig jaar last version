@@ -1,3 +1,28 @@
+Geeft key–value pairs terug.
+my_dict = {"a": 1, "b": 2}
+for key, value in my_dict.items():
+    print(key, value)
+
+output:
+a 1
+b 2
+
+for name, product in self.products.items():
+self.products = {}  # dictionary
+
+Geeft alle values terug (zonder de keys).
+for value in my_dict.values():
+    print(value)
+
+output:
+
+for product in self.products.values():
+    print(product)
+
+output:
+1
+2
+
 from inspect import stack
 
 
