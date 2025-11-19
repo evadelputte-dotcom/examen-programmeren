@@ -1,0 +1,212 @@
+VOORBEELD EXAMEN 2025-2026 
+
+A factory production line has multiple tasks that need to be performed in a specific order. Each task has an estimated duration and priority level.  
+
+To optimize production, the factory wants to ensure that tasks are scheduled efficiently based on priority and duration.  
+
+You are tasked with designing a linked list structure to manage the tasks in the production line.  
+
+Each task in the list should be represented as a node in the linked list, which contains the task name, duration, and priority.  
+
+Your goal is to build functions to add, remove, and reorder tasks based on certain criteria.  
+
+ 
+
+Requirements: 
+
+Create a Linked List Node Class. Each node should contain:  
+
+task_name (string): the name of the task.  
+
+duration (int): the duration of the task in minutes.  
+
+priority (int): the priority of the task (1 is highest priority, higher numbers are lower priority).  
+
+next (pointer): a reference to the next node in the linked list.  
+
+ 
+
+Implement a Linked List Class:  
+
+This class should have the following methods:  
+
+add_task(task_name, duration, priority): Adds a new task to the end of the list. remove_task(task_name): Removes a task with the given name from the list. display_tasks(): Prints all tasks in the linked list in the order they appear. find_task(task_name): Searches for a task by name and returns its details. calculate_total_duration(): Calculates the total duration of all tasks in the current order. read_tasks_from_csv(file_path): Reads tasks from a CSV file and adds them to the linked list.  
+
+reorder_tasks_by_priority(): Reorders the tasks in the linked list based on priority. (lowest priority number comes first).  
+
+reorder_tasks_by_priority_duration(): Reorders the tasks in the linked list based on priority, then duration. 
+
+ 
+
+ 
+
+TIP: The reorder tasks are implemented by creating a new linked list to which the different nodes are added based on priority. This means that you first need to implement two helper methods:  
+sorted_insert_by_priority:  
+This method has input a head (i.a linked list) and a node. The method adds the node to linked list by looking at the duration. Nodes with the lowest duration are added in the beginning of the LinkedList.  
+sorted_insert_by_priority_duration:  
+
+This method has input a head (i.a linked list) and a node. The method adds the node to linked list by looking first at the priority and next at duration. Nodes with the lowest priority and then duration are added in the beginning of the LinkedList. Develop a Solution to Optimize Task Order Given a series of tasks (see tasks.csv), reorder them to optimize for the shortest completion time. Consider both priority and duration 
+
+
+
+
+
+  # https://dodona.be/nl/courses/5447/series/63929/activities/2121011474
+
+class LinkedNode:
+    def __init__(self, task_name:str, duration:int, priority:int):
+        self.task_name = task_name
+        self.duration = duration
+        self.priority = priority
+        self.next = None
+
+    def __repr__(self):
+        return f'{self.task_name} ({self.duration}, {self.priority})'
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+        self.size = 0
+
+    def add_task(self, task_name:str, duration:int, priority:int):
+        NewTask = LinkedNode(task_name, duration, priority)
+        if self.head is None:
+            self.head = self.tail = NewTask
+        else:
+            self.tail.next = NewTask
+            self.tail = self.tail.next
+        self.size += 1
+
+    def remove_task(self, task_name:str):
+        current = self.head
+        previous = None
+        while current:
+            if current.task_name == task_name:
+                if previous is None:
+                    self.head = current.next
+                else:
+                    previous.next = current.next
+                if  current == self.tail:
+                    self.tail = previous
+                self.size -= 1
+                return True
+            previous = current
+            current = current.next
+        return False
+
+    def display(self):
+        current = self.head
+        previous = None
+        while current:
+            print(current.task_name)
+            previous = current
+            current = current.next
+
+    def find_task(self, task_name:str):
+        current = self.head
+        previous = None
+        while current:
+            if current.task_name == task_name:
+                return (current.task_name, current.duration, current.priority)
+            previous = current
+            current = current.next
+        return None
+
+
+    def calculate_total_duration(self):
+        current = self.head
+        previous = None
+        total = 0
+        while current:
+            total += current.duration
+            previous = current
+            current = current.next
+        return total
+
+
+    def read_task_from_csv(selfself, file_path):
+        OutputFile =open(file_path, 'r')
+        OutputData = OutputFile.read()
+        OutputFile.close()
+
+        # CSV-bestand opsplitsen in regels
+        lines = OutputData.splitlines()
+        for line in lines:
+            # Splits elke regel op komma's
+            columns = line.split(',')
+            task = columns[0]  # eerste kolom als taak
+            self.add_task(task)
+
+
+    def sorted_insert_by_priority(self, head, node):
+        # Als de lijst leeg is, wordt de nieuwe node het begin
+        if head is None:
+            node.next = None
+            return node
+
+        # Als de nieuwe node een lagere duur heeft dan de eerste node,
+        # moet hij helemaal vooraan komen
+        if node.duration < head.duration:
+            node.next = head
+            return node
+
+        # Anders zoeken we de juiste plek om in te voegen
+        current = head
+        while current.next and current.next.duration <= node.duration:
+            current = current.next
+
+        # Node invoegen
+        node.next = current.next
+        current.next = node
+
+        return head
+
+    def sorted_insert_by_priority_duration(self, head, node):
+        if head is None:
+            node.next = None
+            return node
+
+        if (node.priority < head.priority) or \
+                (node.priority == head.priority and node.duration < head.duration):
+            node.next = head
+            return node
+
+        current = head
+
+        while current.next:
+            next_node = current.next
+
+            correct_priority = next_node.priority < node.priority
+            same_priority = next_node.priority == node.priority
+            shorter_duration = next_node.duration <= node.duration
+
+            if not (correct_priority or (same_priority and shorter_duration)):
+                break
+
+            current = current.next
+
+        node.next = current.next
+        current.next = node
+
+        return head
+
+    def reoder_tasks_by_priority(self):
+        new_head = None
+        current = self.head
+        while current:
+            next_node = current.next
+            current.next = None
+            new_head = self.sorted_insert_by_priority(new_head, current)
+            current = next_node
+        self.head = new_head
+
+    def reorder_tasks_by_priority_duration(self):
+        new_head = None
+        current = self.head
+        while current:
+            next_node = current.next
+            current.next = None
+            new_head = self.sorted_insert_by_priority_duration(new_head, current)
+            current = next_node
+        self.head = new_head
