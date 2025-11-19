@@ -1,0 +1,291 @@
+# https://dodona.be/nl/courses/5447/series/63928/activities/1484441936
+
+import heapq
+from functools import total_ordering
+
+@total_ordering
+class SpecialSorted:
+
+    def __init__(self, element, value):
+        self.element = element
+        self.value = value
+
+    def __eq__(self, other):
+        return self.value == other.value
+
+    def __ne__(self, other):
+        return self.value != other.value
+
+    def __lt__(self, other):
+        return self.value < other.value
+
+class PriorityQueue:
+    #je steekt dingen in de wachtrij met add(item)
+    #de wachtrij houdt automatisch het item met de kleinste sortkey(item) vooraan
+    #met poll() haal je dat item eruit
+    def __init__(self, sortkey = lambda x : x):
+        self.content = []
+        self.sortkey = sortkey
+
+    def add(self, item):
+        heapq.heappush(self.content, SpecialSorted(item, self.sortkey(item)))
+
+    def peek(self):
+        return self.content[0].element if self.content else None
+
+    def poll(self):
+        return heapq.heappop(self.content).element if len(self.content) > 0 else None
+
+    def is_empty(self):
+        return len(self.content) == 0
+
+    def __str__(self):
+        return str(heapq.nsmallest(len(self.content), [item.element for item in self.content]))
+
+def shortest_path(graph, src, dest):
+    #special case: source == destination
+    if src == dest:
+        return [src] #als start en eind hetzelfde zijn -> kortste pad is gewoon de node zelf
+    dist = {node: float('inf') for node in graph.get_all_nodes()} #beste (kleinste) afstand die we tot nu toe kennen van src naar node
+    #eerst alles op oneindig ver weg vandaar float
+    prev = {node: None for node in graph.get_all_nodes()} #vanwaar kom je naar deze node in het kortste pad?
+    dist[src] = 0
+
+    #priority queue vullen met startpunt
+    pq = PriorityQueue(sortkey = lambda x : x[1])
+    pq.add((src, 0)) #we starten met (src, 0) in de queue
+
+    visited = set() #houdt bij welke nodes definitief afgewerkt zijn
+
+    # HOOFDLUS DIJKSTRA #
+    while not pq.is_empty():
+        node, d = pq.poll()
+        #zolang er nog kandidaten zijn:
+            #neem die met de kleinste afstand = poll()
+            #node = welke node
+            #d = huidige kortste bekende afstand
+        if node in visited: #een node kan meerdere keren in de queue belanden (als we een beter pad vinden)
+            continue #willen hem maar 1 keer echt verwerken
+        visited.add(node) #dus als hij al in visited zou zitten --> negeren
+
+        #vroegtijdig stoppen als we het doel hebben
+        if node == dest: #zodra we dest uit de queue halen, is zijn afstand definitief minimaal (dat is prc het idee van Dijkstra)
+            path =[]
+            while node is not None:
+                path.insert(0, node)
+                node = prev[node] #recontructie van pad door terug te lopen in prev
+            return path
+
+        for edge in graph.get_outgoing_edges(node): #voor elke ingaande rand node -> nxt met gewicht w
+            nxt = edge.node2 #d = al bekende afstand van src naar node
+            new_dist = d + edge.weight #= d+w = kandidaat-afstand naar nxt via node
+
+            if new_dist < dist[nxt]: #als die nieuwe afstand beter is dan wat we al hadden
+                dist[nxt] = new_dist # onthoud: kortste weg naar nxt loopt via node --> prev[nxt] = node
+                prev[nxt] = node #duw(nxt, new_dist) in de queue
+                pq.add((nxt, new_dist))
+    #no path found
+    return None
+
+
+
+# https://dodona.be/nl/courses/5447/series/63928/activities/793399164
+
+#def mergesort(self, lijst:list):
+   # self.lijst = lijst
+# hoeft niet want is niet object georienteerd !!
+
+def mergesort(lst):
+    # Als de lijst 0 of 1 element heeft, is ze al gesorteerd
+    if len(lst) <= 1:
+        return lst
+
+    # Splits de lijst in twee helften
+    mid = len(lst) // 2
+    left = mergesort(lst[:mid])
+    right = mergesort(lst[mid:])
+
+    # Merge de twee gesorteerde helften
+    return merge(left, right)
+
+def merge(left, right):
+    """Voegt twee gesorteerde lijsten samen tot één gesorteerde lijst."""
+
+    merged = []
+    i = j = 0
+
+    # Zolang beide lijsten nog elementen hebben
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            merged.append(left[i])
+            i += 1
+        else:
+            merged.append(right[j])
+            j += 1
+
+    # Voeg de rest van de overgebleven elementen toe
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+
+    return merged
+
+
+
+
+
+# https://dodona.be/nl/courses/5447/series/63928/activities/779364229
+
+#Dit is een bottom-up MergeSort, dus niet-recursief.
+#In plaats van de lijst telkens in tweeën te splitsen
+#(zoals bij de klassieke recursieve MergeSort), begin je hier met sub­lijstjes
+#van grootte 1 en merge je die steeds tot grotere gesorteerde blokken.
+
+#bv: grootte = 1 : merge 4 and 3 + merge 2 and 1
+#bv: grootte = 2 : merge 4,3 and 1,2
+#bv: grootte = 4 => klaar
+
+def sorteer(rij):
+    n = len(rij)
+    grootte = 1   # Start met sublijsten van lengte 1
+
+    # Zolang de sublijstgrootte kleiner is dan de totale lengte
+    while grootte < n:
+        # Ga door de lijst en merge telkens paren van grootte "grootte"
+        for begin in range(0, n, 2 * grootte): #=> steeds een blok van 2*grootte verspringen
+            midden = begin + grootte
+            einde = min(begin + 2 * grootte, n)
+
+            # Linker deelrij: rij[begin:midden]
+            # Rechter deelrij: rij[midden:einde]
+            left = rij[begin:midden]
+            right = rij[midden:einde]
+
+            # Merge de twee gesorteerde deelrijen
+            i = j = 0 #index left en right
+            k = begin #index in originele lijst
+
+            while i < len(left) and j < len(right):
+                if left[i] <= right[j]:
+                    rij[k] = left[i]
+                    i += 1
+                else:
+                    rij[k] = right[j]
+                    j += 1
+                k += 1
+
+            # Kopieer eventueel overschot
+            while i < len(left):
+                rij[k] = left[i]
+                i += 1
+                k += 1
+            while j < len(right):
+                rij[k] = right[j]
+                j += 1
+                k += 1
+
+        # Verdubbel de grootte van de te mergen deelrijen
+        grootte *= 2 #na mergen alles dubbel zo groot maken en herhalen
+
+    #Mini-voorbeeld
+    #Stel rij = [5, 2, 8, 4]
+    #grootte = 1
+    #→ merge [5] en [2] → [2,5]
+    #→ merge [8] en [4] → [4,8]
+    #lijst = [2,5,4,8]
+    #grootte = 2
+    #→ merge [2,5] en [4,8]
+    #lijst = [2,4,5,8]
+    #grootte = 4 → klaar
+
+
+
+# https://dodona.be/nl/courses/5447/series/63928/activities/2123700556
+
+
+import heapq   # # we gebruiken een min-heap voor events en wachtlijst
+
+def simuleer_parking(aantalParkeerplaatsen: int, blokTijd: int, klanten: list) -> int:
+    # events: (tijd, type, winkeltijd)
+    # type = 0 voor vertrek (krijgt voorrang), 1 voor aankomst
+    events = []
+    for aankomst, duur in klanten:
+        heapq.heappush(events, (aankomst, 1, duur))   # # elke klant komt toe → event toevoegen
+
+    wachtlijst = []  # # lijst van klanten die wachten om te parkeren, gesorteerd op winkeltijd
+
+    vrije_plaatsen = aantalParkeerplaatsen   # # start met alle parkeerplaatsen vrij
+    laatste_vertrek = 0                      # # houdt bij wanneer de laatste auto vertrekt
+
+    while events:     # # zolang er gebeurtenissen zijn
+        tijd, soort, duur = heapq.heappop(events)  # # we nemen de vroegste gebeurtenis
+
+        if soort == 0:
+            # iemand vertrekt
+            vrije_plaatsen += 1             # # parkeerplaats komt vrij
+            laatste_vertrek = tijd          # # updaten voor de eindwaarde
+
+        else:
+            # iemand komt toe
+            heapq.heappush(wachtlijst, (duur, tijd))  # # toevoegen op basis van winkeltijd
+
+        # Na elke event proberen we parkeerplaatsen toe te kennen
+        while vrije_plaatsen > 0 and wachtlijst:
+            w_duur, w_tijd = heapq.heappop(wachtlijst)  # # klant met kortste winkeltijd eerst
+            vrije_plaatsen -= 1                         # # gebruikt een plaats
+
+            vertrek_tijd = tijd + w_duur                # # vertrekmoment berekenen
+            heapq.heappush(events, (vertrek_tijd, 0, w_duur))  # # vertrek toevoegen als event
+
+        # Klanten die niet konden parkeren → rijden een blokje
+        # maar enkel bij aankomst-events
+        if soort == 1:
+            # check: staat de klant nog in wachtlijst?
+            # enkel waar als hij net toegevoegd is en niet aan de beurt kwam
+            if wachtlijst and wachtlijst[-1] == (duur, tijd):
+                nieuwe_tijd = tijd + blokTijd           # # tijdstip na rondje rijden
+                heapq.heappush(events, (nieuwe_tijd, 1, duur))  # # nieuwe aankomst toevoegen
+                wachtlijst.pop()                        # # uit de wachtlijst halen
+
+    return laatste_vertrek  # # tijdstip waarop de laatste auto vertrekt
+
+
+
+
+# https://dodona.be/nl/courses/5447/series/63928/activities/1766904044
+import random
+
+
+def sort(lijst):
+    def quicksort(a, left, right):
+        if left >= right:
+            return
+
+        # Kies een pivot en zet die vooraan!!!!!
+        pivot_index = random.randint(left, right) #LEFT EN RIGHT ZIJN INDEXEN
+        a[left], a[pivot_index] = a[pivot_index], a[left]
+
+        # 2-way partition
+        pivot = a[left]
+        k = left #k volgt de grens van het kleine deel: links: alle waarden < pivot, recht: waarden>=pivot
+                #k is ook een index, start bij waarde 0 want pivot staat vanvoor
+        for i in range(left + 1, right + 1):
+            if a[i] < pivot:
+                k += 1
+                a[k], a[i] = a[i], a[k]
+
+        # Zet pivot op zijn juiste plaats
+        a[left], a[k] = a[k], a[left]
+
+        # Recursieve oproepen
+        quicksort(a, left, k - 1)
+        quicksort(a, k + 1, right)
+
+    # Start quicksort op de volledige lijst
+    quicksort(lijst, 0, len(lijst) - 1)
+
+
+
+
+
+
+
