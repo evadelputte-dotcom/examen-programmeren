@@ -80,7 +80,7 @@ class Inventory_Manager:
         if product_name not in self.products:
             print(f"Product {product_name} not found")
             return
-        self.products[product_name].add_batch(quantity, cost_per_unit)
+        self.products[product_name].add_batch(quantity, cost_per_unit) ##FUNCTIE VAN HIERBOVEN !!!!
 
     # 3. simulate_demand
     def simulate_demand(self, min_demand=0, max_demand=20):
@@ -116,24 +116,27 @@ class Inventory_Manager:
 
     # 6. load_from_csv
     def load_from_csv(self, filename):
-        with open(filename, "r") as f:
-            reader = csv.reader(f)
+        # Bestand openen en hele inhoud lezen
+        outputfile = open(filename, "r")
+        outputdata = outputfile.read()
+        outputfile.close()
 
-            for row in reader:
-                product_name = row[0]
-                quantity = int(row[1])
-                cost_per_unit = float(row[2])
+        # Split de inhoud in regels
+        lines = outputdata.strip().split("\n")
 
-                # als product nog niet bestaat → toevoegen
-                if product_name not in self.products:
-                    # je moet holding_cost en stockout_penalty kiezen
-                    # want CSV bevat die niet
-                    # opdracht zegt: product toevoegen als ze nog niet bestaan
-                    # → we kiezen standaardwaarden
-                    self.add_product(product_name, holding_cost=1, stockout_penalty=5)
+        for line in lines:
+            # Split elke regel in velden
+            row = line.split(",") #gescheiden door kommagetal
+            product_name = row[0] #eerste van de lijst
+            quantity = int(row[1]) #tweede van de lijst
+            cost_per_unit = float(row[2]) #derde van de lijst
 
-                # batch toevoegen
-                self.restock_product(product_name, quantity, cost_per_unit)
+            # Zorg dat het product bestaat
+            if product_name not in self.products:
+                self.add_product(product_name, holding_cost=1, stockout_penalty=5)
+
+            # Voeg batch toe
+            self.restock_product(product_name, quantity, cost_per_unit)
 
     # 7. print_inventory
     def print_inventory(self):
