@@ -1,0 +1,297 @@
+Queue – alles) 
+
+# Eenvoudige LinkedList-implementatie voor gebruik in Queue 
+
+class Node: 
+
+    def __init__(self, data): 
+
+        self.data = data 
+
+        self.next = None 
+
+ 
+
+class LinkedList: 
+
+    def __init__(self): 
+
+        self.head = None 
+
+        self.size = 0 
+
+ 
+
+    # Voeg element toe aan het einde 
+
+    def add(self, data): 
+
+        new_node = Node(data) 
+
+        if not self.head: 
+
+            self.head = new_node 
+
+        else: 
+
+            current = self.head 
+
+            while current.next: 
+
+                current = current.next 
+
+            current.next = new_node 
+
+        self.size += 1 
+
+ 
+
+    # Verwijder element op specifieke index 
+
+    def removeAt(self, index): 
+
+        if index < 0 or index >= self.size: 
+
+            return None 
+
+        current = self.head 
+
+        if index == 0: 
+
+            self.head = current.next 
+
+        else: 
+
+            prev = None 
+
+            for _ in range(index): 
+
+                prev = current 
+
+                current = current.next 
+
+            prev.next = current.next 
+
+        self.size -= 1 
+
+        return current.data 
+
+ 
+
+    # Haal element op specifieke index op 
+
+    def get(self, index): 
+
+        if index < 0 or index >= self.size: 
+
+            return None 
+
+        current = self.head 
+
+        for _ in range(index): 
+
+            current = current.next 
+
+        return current.data 
+
+ 
+
+    # Geeft de grootte van de lijst terug 
+
+    def getSize(self): 
+
+        return self.size 
+
+ 
+
+    # Verwijder alle elementen 
+
+    def clear(self): 
+
+        self.head = None 
+
+        self.size = 0 
+
+ 
+
+    # Controleer of element aanwezig is 
+
+    def contains(self, data): 
+
+        current = self.head 
+
+        while current: 
+
+            if current.data == data: 
+
+                return True 
+
+            current = current.next 
+
+        return False 
+
+ 
+
+    # String representatie van de lijst 
+
+    def __str__(self): 
+
+        elements = [] 
+
+        current = self.head 
+
+        while current: 
+
+            elements.append(str(current.data)) 
+
+            current = current.next 
+
+        return " -> ".join(elements) 
+
+ 
+
+# Queue-klasse 
+
+class Queue: 
+
+    def __init__(self): 
+
+        # Initialiseert een lege queue met behulp van een LinkedList 
+
+        self.__elements = LinkedList() 
+
+ 
+
+    # Adds an element to the end of this queue 
+
+    def enqueue(self, e): 
+
+        # Voegt een element toe aan het einde van de queue 
+
+        self.__elements.add(e) 
+
+     
+
+    # Removes and returns the element from the front of the queue 
+
+    def dequeue(self): 
+
+        # Verwijdert het eerste element van de queue en geeft het terug 
+
+        if self.getSize() == 0: 
+
+            return None 
+
+        else: 
+
+            return self.__elements.removeAt(0) 
+
+     
+
+    # Returns the number of elements in the queue 
+
+    def getSize(self): 
+
+        # Geeft de grootte van de queue terug 
+
+        return self.__elements.getSize() 
+
+     
+
+    # Returns a string representation of the queue 
+
+    def __str__(self): 
+
+        # Geeft een stringrepresentatie van de queue 
+
+        return self.__elements.__str__() 
+
+ 
+
+    # Checks if the queue is empty 
+
+    def isEmpty(self): 
+
+        # Geeft True terug als de queue leeg is 
+
+        return self.getSize() == 0 
+
+ 
+
+    # Returns the element at the front without removing it 
+
+    def peek(self): 
+
+        # Geeft het eerste element terug zonder het te verwijderen 
+
+        if self.getSize() == 0: 
+
+            return None 
+
+        return self.__elements.get(0) 
+
+     
+
+    # Clears all elements from the queue 
+
+    def clear(self): 
+
+        # Verwijdert alle elementen uit de queue 
+
+        self.__elements.clear() 
+
+ 
+
+    # Checks if a specific element exists in the queue 
+
+    def contains(self, e): 
+
+        # Controleert of een element aanwezig is in de queue 
+
+        return self.__elements.contains(e) 
+
+ 
+
+ 
+
+# --------- Test van de Queue --------- 
+
+if __name__ == "__main__": 
+
+    q = Queue() 
+
+    q.enqueue(10) 
+
+    q.enqueue(20) 
+
+    q.enqueue(30) 
+
+    print("Queue na enqueue:", q) 
+
+ 
+
+    print("Peek:", q.peek()) 
+
+    print("Dequeue:", q.dequeue()) 
+
+    print("Queue na dequeue:", q) 
+
+ 
+
+    print("Bevat 20?", q.contains(20)) 
+
+    print("Bevat 100?", q.contains(100)) 
+
+ 
+
+    print("Grootte van queue:", q.getSize()) 
+
+    print("Is queue leeg?", q.isEmpty()) 
+
+ 
+
+    q.clear() 
+
+    print("Queue na clear:", q) 
+
+    print("Is queue leeg?", q.isEmpty()) 
