@@ -1,0 +1,62 @@
+
+    def save_to_txt(self, path_name: str):
+        outputfile = open(path_name, "w", encoding="utf-8")
+        outputfile.write("[PLAYERS]\n")
+        for p in self.players:
+            outputfile.write(f"{p.name};{p.number}\n")
+        outputfile.write("[PASSES]\n")
+        for sender_name in self.adj:
+            for p in self.adj[sender_name]:
+                outputfile.write(f"{p.sender.name} -> {p.receiver.name} : {p.nr_of_times}\n")
+        outputfile.close()
+
+
+    def load_from_txt(self, path_name: str):
+        inputfile = open(path_name, "r", encoding="utf-8")
+        lines = inputfile.readlines()                    #maakt een lijst van alle lines
+        inputfile.close()
+
+        section = None
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if line == "[PLAYERS]":
+                section = "players"
+                continue
+            elif line == "[PASSES]":
+                section = "passes"
+                continue
+            elif line.startswith("[") and line.endswith("]"):
+                raise ValueError(f"Onbekende sectie: {line}")
+
+            if section == "players":
+                if ";" not in line:
+                    raise ValueError(f"Ongeldige spelerregel: {line}")
+                name, number = map(str.strip, line.split(";"))
+                try:
+                    number = int(number)
+                except:
+                    raise ValueError(f"Shirtnummer moet een geheel getal zijn: {line}")
+                self.add_player(Player(name, number))
+
+            elif section == "passes":
+                if "->" not in line or ":" not in line:
+                    raise ValueError(f"Ongeldige passregel: {line}")
+                sender_part, rest = line.split("->")
+                receiver_part, times_part = rest.split(":")
+                sender_name = sender_part.strip()
+                receiver_name = receiver_part.strip()
+                try:
+                    times = int(times_part.strip())
+                    if times <= 0:
+                        raise ValueError()
+                except:
+                    raise ValueError(f"Ongeldig aantal passes: {line}")
+                sender = self.get_player(sender_name)
+                receiver = self.get_player(receiver_name)
+                if not sender or not receiver:
+                    raise ValueError(f"Pass verwijst naar onbekende speler: {line}")
+                self.add_pass(sender, receiver, times)
+            else:
+                raise ValueError(f"Sectie ontbreekt voor regel: {line}")
