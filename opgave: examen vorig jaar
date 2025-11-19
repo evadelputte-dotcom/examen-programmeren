@@ -104,41 +104,29 @@ Voegt een nieuwe batch toe aan een product. (2 punten)
 Product [product_name] not found 
 
 3. simulate_demand(min_demand, max_demand) 
-
 Genereert willekeurige vraag voor elk product. (1 punt) 
  Retourneert een dictionary: 
  { product_name: vraag } 
-
 Standaardwaarden: 
-
 min_demand = 0 
-
 max_demand = 20 
 
 4. simulate_day(demand) 
-
 Simuleert een dag operaties. Retourneert totale: 
-
 holding_cost 
-
 stockout_cost 
  (2 punten) 
-
 Parameter demand is een dictionary zoals simulate_demand oplevert. 
 
 5. save_to_csv(filename) 
-
 Slaat voorraad op in een CSV bestand. (1 punt) 
  Elke rij bevat: 
-
 [product_name],[batch_quantity],[batch_cost_per_unit] 
 
 6. load_from_csv(filename) 
-
 Laadt voorraad uit CSV en voegt producten toe als ze nog niet bestaan. (2 punten) 
 
 7. print_inventory() 
-
 Print voor elk product de voorraad zoals in __str__() gedefinieerd. (1 punt) 
 
 Voorbeeld: 
