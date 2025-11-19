@@ -1,155 +1,392 @@
-from inspect import stack
+# linked_list.py
+
+class Node:
+    """
+    Een Node is een enkel element van een linked list.
+    Elk node bevat data en een verwijzing naar de volgende node.
+    """
+    def __init__(self, data):
+        self.data = data
+        self.next = None
 
 
-class Batch():
-    def __init__(self, quantity, cost_per_unit):
-        self.quantity = quantity
-        self.cost_per_unit = cost_per_unit
-
-    def __str__(self):
-       return f"Batch(quantity={self.quantity}, cost_per_unit={self.cost_per_unit})"
-
-
-class Product():
-    def __init__(self, product_name, batches, holding_cost, stockout_penalty):
-        self.product_name = product_name
-        self.holding_cost = holding_cost
-        self.stockout_penalty = stockout_penalty
-        self.batches = [] #!!!!!
-
-
-    def add_batch(self, quantity, cost_per_unit):
-        self.batches.append(Batch(quantity, cost_per_unit))
-
-
-    def fulfill_demand(self, demand):
-        remaining_demand = demand
-
-        # Gebruik batches zolang er vraag is en batches bestaan
-        while remaining_demand > 0 and self.batches:
-            top_batch = self.batches[-1]  # bovenste batch
-
-            if top_batch.quantity > remaining_demand:
-                # Batch kan volledige vraag leveren
-                top_batch.quantity -= remaining_demand
-                remaining_demand = 0
-            else:
-                # Batch raakt op → haal batch weg
-                remaining_demand -= top_batch.quantity
-                self.batches.pop()
-
-        # Als er nog vraag is → stockout
-        if remaining_demand > 0:
-            return remaining_demand * self.stockout_penalty
-
-        return 0  # alles geleverd
-
-    def calculate_holding_costs(self):
-        for batch in self.batches:                              #self.batches = mijn batches
-            cost = batch.quantity * self.holding_cost           #batches = zomaar batches
-            totale_cost +=cost
-        return totale_cost
-
-
-    def __str__(self):
-        s = f"Product {self.product_name}:\n"
-        for batch in self.batches:
-            s += str(batch) + "\n"
-        return s
-
-
-import csv
-import random
-
-
-class Inventory_Manager:
+class LinkedList:
+    """
+    LinkedList class ondersteunt basisoperaties zoals:
+    - toevoegen van elementen (begin, einde, positie)
+    - verwijderen van elementen
+    - zoeken naar elementen
+    - printen van de lijst
+    - lengte van de lijst
+    """
+    
     def __init__(self):
-        # dictionary: { product_name : Product-object }
-        self.products = {}
+        self.head = None  # start van de lijst
 
-    # 1. add_product
-    def add_product(self, product_name, holding_cost, stockout_penalty):
-        if product_name in self.products:
-            print(f"Product {product_name} already exists.")
+    # --- Toevoegen van nodes ---
+    def append(self, data):
+        """Voeg een node toe aan het einde van de lijst."""
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
             return
-        self.products[product_name] = Product(product_name, holding_cost, stockout_penalty)
-        
+        last = self.head
+        while last.next:
+            last = last.next
+        last.next = new_node
 
-    # 2. restock_product
-    def restock_product(self, product_name, quantity, cost_per_unit):
-        if product_name not in self.products:
-            print(f"Product {product_name} not found")
+    def prepend(self, data):
+        """Voeg een node toe aan het begin van de lijst."""
+        new_node = Node(data)
+        new_node.next = self.head
+        self.head = new_node
+
+    def insert_after_node(self, prev_node, data):
+        """Voeg een node toe na een gegeven node."""
+        if not prev_node:
+            print("Previous node is not in the list")
             return
-        self.products[product_name].add_batch(quantity, cost_per_unit) ##FUNCTIE VAN HIERBOVEN !!!!
+        new_node = Node(data)
+        new_node.next = prev_node.next
+        prev_node.next = new_node
 
-    # 3. simulate_demand
-    def simulate_demand(self, min_demand=0, max_demand=20):
-        demand_dict = {}
-        for name in self.products:
-            demand_dict[name] = random.randint(min_demand, max_demand)
-        return demand_dict
+    # --- Verwijderen van nodes ---
+    def delete_node(self, key):
+        """Verwijder de eerste node met de opgegeven waarde."""
+        current = self.head
 
-    # 4. simulate_day
-    def simulate_day(self, demand):
-        total_holding = 0
-        total_stockout = 0
+        # Als de head de key bevat
+        if current and current.data == key:
+            self.head = current.next
+            current = None
+            return
 
-        for name, product in self.products.items():
-            # A) Holding cost berekenen
-            total_holding += product.calculate_holding_cost()
+        prev = None
+        while current and current.data != key:
+            prev = current
+            current = current.next
 
-            # B) Demand afhandelen
-            product_demand = demand.get(name, 0)
-            stockout_cost = product.fulfill_demand(product_demand)
-            total_stockout += stockout_cost
+        if current is None:
+            print("Node not found")
+            return
 
-        return total_holding, total_stockout
+        prev.next = current.next
+        current = None
 
-    # 6. save_to_csv
-    def save_to_csv(self, filename):
-        # Bestand openen om te schrijven
-        outputfile = open(filename, "w")
+    def delete_node_at_pos(self, pos):
+        """Verwijder node op een bepaalde positie (0-gebaseerd)."""
+        if not self.head:
+            return
 
-        # Voor elk product en elke batch
-        for product_name, product in self.products.items():
-            for batch in product.batches:
-                # Schrijf een regel met komma's
-                line = f"{product_name},{batch.quantity},{batch.cost_per_unit}\n"
-                outputfile.write(line)
+        current = self.head
 
-        # Bestand sluiten
-        outputfile.close()
+        if pos == 0:
+            self.head = current.next
+            current = None
+            return
 
-    # 6. load_from_csv
-    def load_from_csv(self, filename):
-        # Bestand openen en hele inhoud lezen
-        outputfile = open(filename, "r")
-        outputdata = outputfile.read()
-        outputfile.close()
+        prev = None
+        count = 0
+        while current and count != pos:
+            prev = current
+            current = current.next
+            count += 1
 
-        # Split de inhoud in regels
-        lines = outputdata.strip().split("\n")
+        if not current:
+            print("Position out of bounds")
+            return
 
-        for line in lines:
-            # Split elke regel in velden
-            row = line.split(",") #gescheiden door kommagetal
-            product_name = row[0] #eerste van de lijst
-            quantity = int(row[1]) #tweede van de lijst
-            cost_per_unit = float(row[2]) #derde van de lijst
+        prev.next = current.next
+        current = None
 
-            # Zorg dat het product bestaat
-            if product_name not in self.products:
-                self.add_product(product_name, holding_cost=1, stockout_penalty=5)
+    # --- Zoeken ---
+    def search(self, key):
+        """Zoek naar een waarde in de lijst. Return True/False."""
+        current = self.head
+        while current:
+            if current.data == key:
+                return True
+            current = current.next
+        return False
 
-            # Voeg batch toe
-            self.restock_product(product_name, quantity, cost_per_unit)
+    # --- Overige methodes ---
+    def length(self):
+        """Geef de lengte van de lijst terug."""
+        count = 0
+        current = self.head
+        while current:
+            count += 1
+            current = current.next
+        return count
 
-    # 7. print_inventory
-    def print_inventory(self):
-        print("Current Inventory:")
-        for product in self.products.values():
-            print(product)  # gebruikt Product.__str__()
-            print()
+    def print_list(self):
+        """Print de gehele linked list."""
+        current = self.head
+        ll_str = ""
+        while current:
+            ll_str += str(current.data) + " -> "
+            current = current.next
+        ll_str += "None"
+        print(ll_str)
+
+
+# --- Voorbeeld gebruik ---
+if __name__ == "__main__":
+    ll = LinkedList()
+    ll.append(10)
+    ll.append(20)
+    ll.append(30)
+    ll.prepend(5)
+    ll.print_list()  # Output: 5 -> 10 -> 20 -> 30 -> None
+
+    print("Length:", ll.length())  # Output: Length: 4
+    print("Search 20:", ll.search(20))  # Output: True
+    print("Search 40:", ll.search(40))  # Output: False
+
+    ll.delete_node(10)
+    ll.print_list()  # Output: 5 -> 20 -> 30 -> None
+
+    ll.delete_node_at_pos(1)
+    ll.print_list()  # Output: 5 -> 30 -> None
+
+
+
+LINKED LISTS:
+
+class Node:
+    def __init__(self, e):
+        self.element = e
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        # Creates an empty linked list
+        self.head = None
+        self.tail = None
+        self.size = 0
+
+    # Adds a new element to the head of the list
+    def addFirst(self, e):
+        newNode = Node(e)
+        newNode.next = self.head
+        self.head = newNode
+        self.size += 1
+        if self.tail is None:
+            self.tail = self.head
+
+    # Adds a new element to the tail of the list
+    def addLast(self, e):
+        newNode = Node(e)
+        if self.tail is None:
+            self.head = self.tail = newNode
+        else:
+            self.tail.next = newNode
+            self.tail = self.tail.next
+        self.size += 1
+
+    # Same as addLast(e)
+    def add(self, e):
+        self.addLast(e)
+
+    # Returns the first element in the list
+    def getFirst(self):
+        if self.size == 0:
+            return None
+        return self.head.element
+
+    # Returns the last element in the list
+    def getLast(self):
+        if self.size == 0:
+            return None
+        return self.tail.element
+
+    # Removes the first element from the list
+    def removeFirst(self):
+        if self.size == 0:
+            return None
+        temp = self.head
+        self.head = self.head.next
+        self.size -= 1
+        if self.head is None:
+            self.tail = None
+        return temp.element
+
+    # Removes the last element from the list
+    def removeLast(self):
+        if self.size == 0:
+            return None
+        elif self.size == 1:
+            temp = self.head
+            self.head = self.tail = None
+            self.size = 0
+            return temp.element
+        else:
+            current = self.head
+            for _ in range(self.size - 2):
+                current = current.next
+            temp = self.tail
+            self.tail = current
+            self.tail.next = None
+            self.size -= 1
+            return temp.element
+
+    # Adds a new element at the specified index
+    def insert(self, index, e):
+        if index <= 0:
+            self.addFirst(e)
+        elif index >= self.size:
+            self.addLast(e)
+        else:
+            current = self.head
+            for _ in range(1, index):
+                current = current.next
+            temp = current.next
+            current.next = Node(e)
+            current.next.next = temp
+            self.size += 1
+
+    # Removes all the elements from this list
+    def clear(self):
+        self.head = self.tail = None
+        self.size = 0
+
+    # Returns True if this list contains the element
+    def contains(self, e):
+        current = self.head
+        while current:
+            if current.element == e:
+                return True
+            current = current.next
+        return False
+
+    # Returns the element at the specified index
+    def get(self, index):
+        if index < 0 or index >= self.size:
+            return None
+        current = self.head
+        for _ in range(index):
+            current = current.next
+        return current.element
+
+    # Returns the index of the first matching element
+    def indexOf(self, e):
+        current = self.head
+        idx = 0
+        while current:
+            if current.element == e:
+                return idx
+            current = current.next
+            idx += 1
+        return -1
+
+    # Returns the index of the last matching element
+    def lastIndexOf(self, e):
+        current = self.head
+        idx = 0
+        last_index = -1
+        while current:
+            if current.element == e:
+                last_index = idx
+            current = current.next
+            idx += 1
+        return last_index
+
+    # Returns True if this list contains no elements
+    def isEmpty(self):
+        return self.size == 0
+
+    # Returns the number of elements in this list
+    def getSize(self):
+        return self.size
+
+    # Removes the element from this list
+    def remove(self, e):
+        if self.size == 0:
+            return False
+        if self.head.element == e:
+            self.removeFirst()
+            return True
+
+        previous = self.head
+        current = self.head.next
+        while current:
+            if current.element == e:
+                previous.next = current.next
+                if current == self.tail:
+                    self.tail = previous
+                self.size -= 1
+                return True
+            previous, current = current, current.next
+        return False
+
+    # Removes the element at the specified index and returns it
+    def removeAt(self, index):
+        if index < 0 or index >= self.size:
+            return None
+        if index == 0:
+            return self.removeFirst()
+        elif index == self.size - 1:
+            return self.removeLast()
+        else:
+            previous = self.head
+            for _ in range(1, index):
+                previous = previous.next
+            current = previous.next
+            previous.next = current.next
+            self.size -= 1
+            return current.element
+
+    # Sets the element at the specified index and returns the replaced element
+    def set(self, index, e):
+        if index < 0 or index >= self.size:
+            return None
+        current = self.head
+        for _ in range(index):
+            current = current.next
+        old_value = current.element
+        current.element = e
+        return old_value
+
+    # Returns an iterator for this linked list
+    def __iter__(self):
+        return LinkedListIterator(self.head)
+
+    # Returns a string representation of the list
+    def __str__(self):
+        result = "["
+        current = self.head
+        while current:
+            result += str(current.element)
+            current = current.next
+            if current:
+                result += ", "
+        result += "]"
+        return result
+
+
+class Node:
+    """Node class for LinkedList."""
+    def __init__(self, e):
+        self.element = e
+        self.next = None
+
+
+class LinkedListIterator:
+    """Iterator for LinkedList."""
+    def __init__(self, head):
+        self.current = head
+
+    def __next__(self):
+        if self.current is None:
+            raise StopIteration
+        element = self.current.element
+        self.current = self.current.next
+        return element
+
+    def __iter__(self):
+        return self
+
+
 
 
 
