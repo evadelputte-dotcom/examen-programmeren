@@ -1,0 +1,14 @@
+# Overzicht van string-methodes in Python
+
+Hier is een handig overzicht van de functies `strip()`, `split()` en `splitlines()`.
+
+| Functie        | Wat het doet                                      | Output type | Voorbeeld |
+|----------------|--------------------------------------------------|------------|-----------|
+| `strip()`      | Verwijdert witruimte of opgegeven tekens **aan begin en einde** van een string | string     | ```python text = "  Hallo wereld!  "\nprint(text.strip()) # "Hallo wereld!"``` |
+| `split()`      | Verdeelt een string op een scheidingsteken en geeft een **lijst van substrings** terug. Standaard wordt op witruimte gesplitst. | lijst      | ```python text = "Python is leuk"\nprint(text.split()) # ['Python', 'is', 'leuk']``` |
+| `splitlines()` | Verdeelt een string op **regel-einden** (`\n`, `\r\n`) en geeft een lijst van regels terug. | lijst      | ```python text = "Eerste regel\nTweede regel"\nprint(text.splitlines()) # ['Eerste regel', 'Tweede regel']``` |
+
+**Extra tips:**
+- `strip(chars)` verwijdert ook specifieke tekens als je die meegeeft.
+- `split(sep, maxsplit)` kan een scheidingsteken en maximaal aantal splitsingen krijgen.
+- `splitlines(keepends=True)` behoudt de newline-tekens (`\n`) in de output.
