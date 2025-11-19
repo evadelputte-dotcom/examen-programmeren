@@ -1,0 +1,227 @@
+# https://dodona.be/nl/courses/5447/series/63926/activities/1871849966
+
+def bloedgroep_kind(vader, moeder):                                       # functie die alle mogelijke bloedgroepen van een kind bepaalt
+    ABO = {                                                               # tabel met mogelijke ABO-allelen per fenotype
+        'A': ['A', 'O'],                                                  # A → allelen AA of AO
+        'B': ['B', 'O'],                                                  # B → BB of BO
+        'AB': ['A', 'B'],                                                 # AB → altijd AB
+        'O': ['O', 'O']                                                   # O → altijd OO
+    }
+    Rh = {                                                                # tabel rhesusfactor
+        '+': ['+', '-'],                                                  # + → ++ of +-
+        '-': ['-', '-'],                                                  # - → --
+    }
+
+    mogelijk = set()                                                      # hierin verzamelen we alle mogelijke bloedgroepen
+
+    abo_v, rh_v = vader[:-1], vader[-1]                                   # split vader: alles behalve laatste char = ABO, laatste = Rh
+    abo_m, rh_m = moeder[:-1], moeder[-1]                                 # split moeder idem
+
+    for a1 in ABO[abo_v]:                                                 # loop over elke mogelijke ABO-allel van vader
+        for a2 in ABO[abo_m]:                                             # loop over elke mogelijke ABO-allel van moeder
+            allel_set = {a1, a2}                                          # set voor makkelijke vergelijking
+
+            if allel_set == {'A', 'B'}:                                   # A + B → AB
+                kind_abo = 'AB'
+            elif 'A' in allel_set and 'B' not in allel_set:               # alleen A en/of O → A
+                kind_abo = 'A'
+            elif 'B' in allel_set and 'A' not in allel_set:               # alleen B en/of O → B
+                kind_abo = 'B'
+            else:                                                          # rest is O (O+O)
+                kind_abo = 'O'
+
+            for r1 in Rh[rh_v]:                                           # Rh-allel vader
+                for r2 in Rh[rh_m]:                                       # Rh-allel moeder
+                    kind_rh = '+' if '+' in (r1, r2) else '-'             # + domineert boven -
+
+                    mogelijk.add(kind_abo + kind_rh)                      # voeg bloedgroep van kind toe
+
+    return mogelijk                                                        # geef alle mogelijke kind-bloedgroepen terug
+
+
+def bloedgroep_ouder(ouder, kind):                                        # functie die mogelijke bloedgroepen van de andere ouder bepaalt
+    bloedgroepen = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']     # lijst met alle bloedgroepen
+    mogelijk = set()                                                      # verzameling voor oplossingen
+
+    for bg in bloedgroepen:                                               # test elke bloedgroep als mogelijke ouder
+        if kind in bloedgroep_kind(ouder, bg):                            # als ouder + bg het kind kunnen maken
+            mogelijk.add(bg)                                              # voeg toe aan de mogelijke bloedgroepen
+
+    return mogelijk                                                        # resultaat teruggeven
+
+
+# https://dodona.be/nl/courses/5447/series/63926/activities/2128064180
+numlist = [ 100, 101, 0, "103", 104 ]
+
+try:
+    i1 = int( input( "Give an index: " ) )
+    print( "100 /", numlist[i1], "=", 100 / numlist[i1] )
+except ValueError:
+    print("Fout: ValueError")
+except IndexError:
+    print("Fout: IndexError")
+except ZeroDivisionError:
+    print("Fout: ZeroDivisionError")
+except TypeError:
+    print("Fout: TypeError")
+
+
+# ValueError → verkeerde waarde, bv. int("abc")
+# TypeError → verkeerde soort gegevens, bv. 5 + "hallo"
+# ZeroDivisionError → delen door 0
+# IndexError → index bestaat niet in een lijst
+# KeyError → key bestaat niet in een dictionary
+# NameError → variabele bestaat niet
+# FileNotFoundError → bestand niet gevonden
+# OverflowError → getal is te groot voor een bewerking
+# StopIteration → iterator is op
+# RuntimeError → algemene fout tijdens uitvoering
+# AttributeError → iets probeert een attribuut te gebruiken dat niet bestaat
+
+
+
+# https://dodona.be/nl/courses/5447/series/63926/activities/531231333
+from enum import nonmember
+
+
+def dubbel(lijst:list):
+    gezien = set()
+    for getal in lijst:
+        if getal in gezien:
+            return getal
+        else:
+            gezien.add(getal)
+    return None ##!!
+
+def dubbels(lijst):
+    gezien = set()
+    tweemaal = set()
+
+    for getal in lijst:
+        if getal in tweemaal:
+            # al zeker dubbel, niets meer doen
+            continue
+        elif getal in gezien:
+            # komt nu minstens een tweede keer voor
+            tweemaal.add(getal)
+        else:
+            # eerste keer gezien
+            gezien.add(getal)
+
+    return gezien - tweemaal, tweemaal
+
+
+# https://dodona.be/nl/courses/5447/series/63926/activities/1380468269
+
+
+def woorden_splitsen(Data):
+    Inputfile = open(Data, "r")        # Bestand openen
+    Inputdata = Inputfile.read()       # Tekst lezen
+    Inputfile.close()                  # Bestand sluiten!
+
+    woorden = Inputdata.split()        # Je bedoelde split(), niet strip()                      => split = in substrings verdelen, hier o.b.v. spatie !! geef een lijst terug !!
+    nieuwe_lijst = []                  # Typfout verbeterd
+
+    for woord in woorden:              # Loopen over de woordenlijst, niet over een lege lijst
+        woord = woord.strip(".?!,")    # Leestekens verwijderen                                 => past de randen van de strin gaan
+        nieuwe_lijst.append(woord)     # Toevoegen aan de lijst
+
+    return nieuwe_lijst
+
+def woorden_tellen(Data):
+    dict_tellingen = {}                     # 1. Maak een lege dictionary voor de tellingen
+    lijst = woorden_splitsen(Data)          # 2. Haal de woordenlijst op (proper gemaakt)
+                                            #    woorden_splitsen() geeft bv. ['dit', 'is', 'een', 'test']
+    lijstLower = []                          # 3. We maken een nieuwe lijst waarin ALLE woorden lowercase worden
+
+    for i in range(len(lijst)):              # 4. Loop over alle indexen van de lijst
+        lijstLower.append(lijst[i].lower())  #    Zet elk woord om naar kleine letters
+
+    for woord in lijstLower:                 # 5. Loop over elk woord in de lowercase lijst
+        if woord not in dict_tellingen:      # 6. Staat het woord nog niet in de dictionary?
+            dict_tellingen[woord] = 1        # Dan starten we een telling bij 1
+        else:
+            dict_tellingen[woord] += 1       # 7. Bestaat het woord al? +1 erbij
+
+    return dict_tellingen                  # 8. Geef de dictionary met tellingen terug
+
+
+# https://dodona.be/nl/courses/5447/series/63926/activities/933472639
+
+def overzicht(codes: list):
+    # Registratiegroepen en hun landcodes
+    groepen = {
+        "Engelstalige landen": ['0', '1'],
+        "Franstalige landen": ['2'],
+        "Duitstalige landen": ['3'],
+        "Japan": ['4'],
+        "Russischtalige landen": ['5'],
+        "China": ['7'],
+        "Overige landen": ['6', '8', '9']
+    }
+
+    # Dictionary aanmaken om fouten per groep te tellen
+    telling = {}
+
+    # Voor elke groep in de lijst 'groepen'
+    # voegen we een entry toe in de dict met een beginwaarde van 0 fouten
+    for groep in groepen:
+        telling[groep] = 0
+
+    # We voegen ook een speciale categorie toe voor fouten die niet aan een groep hangen
+    telling["Fouten"] = 0
+
+
+    for code in codes:
+        # Controle op lengte en cijfers
+        if len(code) != 13 or not code.isdigit():
+            telling["Fouten"] += 1
+            continue
+
+        # Controle op prefix 978 of 979
+        if code[:3] not in ("978", "979"):
+            telling["Fouten"] += 1
+            continue
+
+        # Controlecijfer berekenen
+        totaal = 0
+        for i in range(12):
+            cijfer = int(code[i])
+            totaal += cijfer if i % 2 == 0 else cijfer * 3
+
+        controlecijfer = (10 - (totaal % 10)) % 10
+        if controlecijfer != int(code[12]):
+            telling["Fouten"] += 1
+            continue
+
+        # Bepaal groep
+        vierde_cijfer = code[3]
+        groep = "Fouten"                        # standaard: fout
+        for g, cijfers in groepen.items():
+            if vierde_cijfer in cijfers:        #of via match = vierde_cijfer in cijfer
+                                                #if match: groep = g
+                groep = g                       #break
+                break
+
+        telling[groep] += 1
+
+    # Resultaten afdrukken in de juiste volgorde
+    volgorde = [
+        "Engelstalige landen",
+        "Franstalige landen",
+        "Duitstalige landen",
+        "Japan",
+        "Russischtalige landen",
+        "China",
+        "Overige landen",
+        "Fouten"
+    ]
+
+    for groep in volgorde:
+        print(f"{groep}: {telling[groep]}")
+
+
+
+
+
+
