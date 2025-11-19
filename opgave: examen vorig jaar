@@ -1,0 +1,184 @@
+⭐ Volledige Uitgetypte Tekst – Product & Inventory Management (Dodona-opdracht) 
+
+🧱 Product – Inventory Management 
+
+In deze oefening moet je een voorraadbeheersysteem implementeren met behulp van stacks. 
+ Het doel is om realistische voorraadoperaties te simuleren, waarbij producten in batches worden beheerd en het Last-In-First-Out (LIFO)-principe wordt toegepast. 
+ Dit weerspiegelt scenario’s waarbij de meest recent toegevoegde voorraad als eerste wordt gebruikt, zoals bij duurzame goederen. 
+
+ 
+
+🔹 Implementeer de Batch-klasse (1 punt) 
+
+Maak de Batch-klasse die een batch van de voorraad van een product vertegenwoordigt. 
+
+Een Batch-object bevat: 
+
+quantity: de hoeveelheid van het product in de batch 
+
+cost_per_unit: de kosten voor één eenheid uit deze batch 
+ (Deze kosten kunnen verschillen per batch, dus worden ze niet op productniveau opgeslagen.) 
+
+De klasse bevat ook een __str__-methode die een batch weergeeft als: 
+
+Batch(quantity=[quantity], cost_per_unit=[cost_per_unit]) 
+
+ 
+
+🔹 Implementeer de Product-klasse (6 punten) 
+
+Maak de Product-klasse (1 punt), die een product met een stapel batches voorstelt. 
+
+Een Product-object bevat: 
+
+product_name: de naam van het product 
+
+batches: een stack van Batch-objecten 
+
+holding_cost: aanhoudingskost per eenheid 
+
+stockout_penalty: kost per eenheid die niet geleverd kan worden 
+
+Verplichte methoden 
+
+1. add_batch(quantity, cost_per_unit) 
+
+Voegt een nieuwe batch toe bovenop de stack. 
+ (1 punt) 
+
+2. fulfill_demand(demand) 
+
+Vervult de vraag met behulp van de bovenste batch. 
+ Als de bovenste batch op raakt, wordt automatisch de volgende batch gebruikt. 
+ (2 punten) 
+
+Als de volledige vraag geleverd kan worden → return 0 
+
+Als niet alle vraag geleverd kan worden → return stockout_penalty × (ongeleverde eenheden) 
+
+ 
+
+ 
+
+3. calculate_holding_cost() 
+
+Retourneert de totale aanhoudingskosten: 
+ som van (holding_cost × batch.quantity) over alle batches. 
+ (1 punt) 
+
+4. str() 
+
+Geeft het product weer als: 
+
+Product [product_name]: 
+
+Batch(quantity=[...], cost_per_unit=[...]) 
+
+Batch(quantity=[...], cost_per_unit=[...]) 
+
+... 
+
+(1 punt) 
+
+ 
+
+🔹 Implementeer de Inventory_Manager-klasse (11 punten) 
+
+Maak de Inventory_Manager-klasse (1 punt). 
+ Dit object bevat een woordenboek van producten waarbij product_name de sleutel is. 
+
+Verplichte methoden 
+
+1. add_product(product_name, holding_cost, stockout_penalty) 
+
+Voegt een nieuw product toe aan de voorraad. (1 punt) 
+ Als het product al bestaat: 
+
+Product [product_name] already exists. 
+
+2. restock_product(product_name, quantity, cost_per_unit) 
+
+Voegt een nieuwe batch toe aan een product. (2 punten) 
+ Als het product niet bestaat: 
+
+Product [product_name] not found 
+
+3. simulate_demand(min_demand, max_demand) 
+
+Genereert willekeurige vraag voor elk product. (1 punt) 
+ Retourneert een dictionary: 
+ { product_name: vraag } 
+
+Standaardwaarden: 
+
+min_demand = 0 
+
+max_demand = 20 
+
+4. simulate_day(demand) 
+
+Simuleert een dag operaties. Retourneert totale: 
+
+holding_cost 
+
+stockout_cost 
+ (2 punten) 
+
+Parameter demand is een dictionary zoals simulate_demand oplevert. 
+
+5. save_to_csv(filename) 
+
+Slaat voorraad op in een CSV bestand. (1 punt) 
+ Elke rij bevat: 
+
+[product_name],[batch_quantity],[batch_cost_per_unit] 
+
+6. load_from_csv(filename) 
+
+Laadt voorraad uit CSV en voegt producten toe als ze nog niet bestaan. (2 punten) 
+
+7. print_inventory() 
+
+Print voor elk product de voorraad zoals in __str__() gedefinieerd. (1 punt) 
+
+Voorbeeld: 
+
+Current Inventory: 
+
+Product Widget: 
+
+Batch(quantity=100, cost_per_unit=2.5) 
+
+Batch(quantity=50, cost_per_unit=2.0) 
+
+  
+
+Product Gadget: 
+
+Batch(quantity=70, cost_per_unit=3.0) 
+
+ 
+
+🧪 Test je code (2 punten) 
+
+Voeg een main-methode toe die: 
+
+Twee producten toevoegt 
+
+Minstens twee batches toevoegt per product 
+
+Vraag simuleert 
+
+Voorraad opslaat in een CSV-bestand 
+
+ 
+
+Wil je verder? 
+
+Ik kan: 
+
+✅ de volledige Python-code voor alle klassen uitschrijven 
+ ✅ een main-testscript maken 
+ ✅ uitleg geven bij elke stap 
+
+Zeg maar wat je nodig hebt! 
