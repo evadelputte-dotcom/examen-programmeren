@@ -1,0 +1,212 @@
+Python classes  
+stack, dictionary, tuple, list 
+
+ 
+
+✅ 1. Stack (Last-In-First-Out – LIFO) 
+
+class Stack: 
+
+    def __init__(self): 
+
+        self.items = [] 
+
+ 
+
+    def push(self, item):							nieuw element bovenop	 
+
+        self.items.append(item) 
+
+ 
+
+    def pop(self):							verwijdert bovenste + teruggeven 
+
+        return self.items.pop() if self.items else None 
+
+ 
+
+    def peek(self):							geeft bovenste terug + niet verwijderen 
+
+        return self.items[-1] if self.items else None 
+
+ 
+
+    def is_empty(self): 
+
+        return len(self.items) == 0 
+
+ 
+
+class Stack:  
+
+def init(self):  
+
+self.__elements = [] 
+
+ 
+
+# Return true if the stack is empty 
+def isEmpty(self): 
+    return len(self.__elements) == 0 
+ 
+# Returns the element at the top of the stack  
+# without removing it from the stack. 
+def peek(self): 
+    if self.isEmpty(): 
+        return None 
+    else: 
+        return self.__elements[len(self.__elements) - 1] 
+ 
+# Stores an element into the top of the stack 
+def push(self, value): 
+    self.__elements.append(value) 
+ 
+# Removes the element at the top of the stack and returns it 
+def pop(self): 
+    if self.isEmpty(): 
+        return None 
+    else: 
+        return self.__elements.pop()  
+ 
+# Return the size of the stack 
+def getSize(self): 
+    return len(self.__elements) 
+ 
+
+ 
+
+✅ 2. Dictionary (key–value mapping) 
+
+class SimpleDict: 
+
+    def __init__(self): 
+
+        self.data = [] 
+
+ 
+
+    def set(self, key, value): 
+
+        for i, (k, v) in enumerate(self.data): 
+
+            if k == key: 
+
+                self.data[i] = (key, value) 
+
+                return 
+
+        self.data.append((key, value)) 
+
+ 
+
+    def get(self, key): 
+
+        for k, v in self.data: 
+
+            if k == key: 
+
+                return v 
+
+        return None 
+
+ 
+
+keys()	geeft alle sleutels 
+
+values()	geeft alle waarden 
+
+items()	geeft sleutels en waarden samen 
+
+get(key)	haalt waarde op zonder foutmelding 
+
+pop(key)	verwijdert een item en geeft de waarde terug                                  
+
+clear()	leegt de dictionary 
+
+Vorm 
+
+✅ 3. Tuple (immutable sequence) 
+
+Een tuple is onveranderlijk. Je zou die zo kunnen nabouwen: 
+
+class SimpleTuple: 
+
+    def __init__(self, *values): 
+
+        self.values = values  # tuple intern 
+
+ 
+
+    def __getitem__(self, index): 
+
+        return self.values[index] 
+
+ 
+
+    def __len__(self): 
+
+        return len(self.values) 
+
+Vorm 
+
+✅ 4. List (dynamic array) 
+
+De ingebouwde list is geoptimaliseerd, maar hier is een simpele wrapper: 
+
+class SimpleList: 
+
+    def __init__(self): 
+
+        self.data = [] 
+
+ 
+
+    def append(self, item): 
+
+        self.data.append(item) 
+
+ 
+
+    def remove(self, item): 
+
+        self.data.remove(item) 
+
+ 
+
+    def __getitem__(self, index): 
+
+        return self.data[index] 
+
+ 
+
+    def __len__(self): 
+
+        return len(self.data) 
+
+Vorm 
+
+🧩 Wat heb je nog? 
+
+Andere klassieke datastructuren die je peut kunnen maken als classes: 
+
+✔ Queue (First-In-First-Out – FIFO) 
+
+class Queue: 
+
+    def __init__(self): 
+
+        self.items = [] 
+
+ 
+
+    def enqueue(self, item): 
+
+        self.items.append(item) 
+
+ 
+
+    def dequeue(self): 
+
+        return self.items.pop(0) if self.items else None 
+
+ 
